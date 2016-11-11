@@ -1,0 +1,218 @@
+syntax = "proto3";
+
+package moserit.roper;
+
+service LandlordService {
+
+	rpc Find (FindLeasesRequest) returns (FindLeasesResponse) {}
+
+	rpc Request (LeaseAcquireRequest) returns (LeaseAcquireResponse) {}
+
+	rpc Renew (LeaseRenewRequest) returns (LeaseRenewResponse) {}
+
+	rpc Cancel (LeaseCancelRequest) returns (LeaseCancelResponse) {}
+
+}
+
+message Endpoint {
+
+	string hostname = 1;
+
+	int32 port = 2;
+
+}
+
+message Tenant {
+
+	string name = 1;
+
+	Endpoint endpoint = 2;
+
+}
+
+message FindLeasesRequest {
+
+	message FindByResource {
+
+		Resource resource = 1;	
+
+	}
+
+	message FindByTenant {
+
+		Tenant tenant = 1;	
+
+	}
+
+	message FindByEndpoint {
+
+		Endpoint endpoint = 1;	
+
+	}
+
+	Tenant tenant = 1;
+
+	oneof type {
+		
+		FindByResource find_by_resource = 2;
+		FindByTenant find_by_tenant = 3;
+		FindByEndpoint find_by_endpoint = 4;
+
+	}
+}
+
+message ListLeaseResponse {
+
+	repeated Lease leases = 1;
+}
+
+message FindLeasesResponse {
+	
+	FindLeasesRequest request = 1;
+		
+	oneof response {
+
+		ListLeaseResponse list_lease_response = 2;
+	
+		ErrorResponse error_response = 3;
+	
+	}
+}
+
+message LeaseRenewRequest {
+	
+	Lease lease = 1;
+	
+}
+
+message LeaseRenewResponse {
+	
+	LeaseRenewRequest request = 1;
+
+	oneof response {
+		
+		Lease lease = 2;	
+
+		ErrorResponse error_response = 3;
+
+	}
+	
+}
+
+message LeaseAcquireRequest {
+	
+	Tenant tenant = 1;
+
+	string resource_name = 2;
+	
+	Lease.ExpirationPolicy expiration_policy = 3;
+	
+}
+
+message LeaseAcquireResponse {	
+
+	LeaseAcquireRequest request = 1;
+
+	oneof response {
+		
+		Lease lease = 2;	
+
+		ErrorResponse error_response = 3;
+
+	}
+
+}
+
+message LeaseCancelRequest {
+
+	Lease lease = 1;	
+
+}
+
+message LeaseCancelResponse {
+
+	LeaseCancelRequest request = 1;
+
+}
+
+service TenantService {
+
+	rpc OnExpired (LeaseExpiredRequest) returns (LeaseExpiredResponse) {}
+		
+}
+
+message LeaseExpiredRequest {
+
+	Lease lease = 1;	
+		
+}
+
+message LeaseExpiredResponse {
+	
+	LeaseExpiredRequest request = 1;
+	
+}
+
+message ErrorResponse {
+	
+	int32 error_code = 1;
+
+	string error_message = 2;
+
+}
+
+message Lease {
+
+	message ExpirationPolicy {
+
+		message ExpiredExpirationPolicy {
+
+		}
+
+		message InfiniteExpirationPolicy {
+
+		}
+
+		message TemporalExpirationPolicy {
+			
+			int32 time_to_live = 1;
+
+		}
+
+		oneof expiration_policy {
+			
+			TemporalExpirationPolicy temporal = 1;
+
+			InfiniteExpirationPolicy infinite = 2;
+
+			ExpiredExpirationPolicy expired = 3;
+
+		}		
+
+	}
+
+	Tenant tenant = 1;
+
+	Resource resource = 2;
+
+	ExpirationPolicy expiration_policy = 3;
+
+}
+
+message Resource {
+
+	message Service {
+		
+		Endpoint endpoint = 1;
+
+	}
+
+	string name = 1;
+
+	oneof type {
+		
+		Service svc = 2;
+
+	}
+}
+

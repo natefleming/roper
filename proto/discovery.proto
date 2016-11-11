@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package moserit.roper;
+
+message DiscoveryEvent {
+
+}
+
+message SubscriptionEvent {
+
+}
