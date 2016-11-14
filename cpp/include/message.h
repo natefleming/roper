@@ -38,7 +38,6 @@ public:
 };
 
 }
-
 }
 
 #endif /* INCLUDE_MESSAGE_H_ */

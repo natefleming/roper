@@ -11,26 +11,25 @@
 #include "message.h"
 
 namespace moserit {
+namespace roper {
 
-	namespace roper {
+class MulticastMessageSender: public MessageSender {
 
-		class MulticastMessageSender : public MessageSender {
+public:
 
-		public:
+	MulticastMessageSender();
+	virtual ~MulticastMessageSender();
 
-			MulticastMessageSender();
-			virtual ~MulticastMessageSender();
+	virtual void send(const Message_t& message) override;
 
-			virtual void send(const Message_t& message) override;
+private:
 
-		private:
+	class Impl;
+	std::unique_ptr<Impl> impl_;
 
-			class Impl;
-			std::unique_ptr<Impl> impl_;
+};
 
-		};
-	}
-
+}
 }
 
 #endif /* INCLUDE_MULTICAST_MESSAGE_SENDER_H_ */

@@ -136,35 +136,6 @@ moserit::roper::MulticastDiscovery::MulticastDiscovery(
 moserit::roper::MulticastDiscovery::~MulticastDiscovery() {
 }
 
-/*
- moserit::roper::
- MulticastDiscovery::MulticastDiscovery(MulticastDiscovery&& rhs) = default;
-
- moserit::roper::
- MulticastDiscovery::MulticastDiscovery(const MulticastDiscovery& rhs) : impl_(nullptr) {
- if(rhs.impl_) {
- //impl_ = moserit::make_unique<Impl>(*rhs.impl_);
- }
- }
-
- moserit::roper::MulticastDiscovery&
- moserit::roper::
- MulticastDiscovery::operator=(MulticastDiscovery&& rhs) = default;
-
- moserit::roper::MulticastDiscovery&
- moserit::roper::
- MulticastDiscovery::operator=(const MulticastDiscovery& rhs) {
- if(!rhs.impl_) {
- impl_.reset();
- } else if (!impl_) {
- //impl_ = moserit::make_unique<Impl>(*rhs.impl_);
- } else {
- //	*impl_ = *rhs.impl_;
- }
- return *this;
- }
- */
-
 void moserit::roper::MulticastDiscovery::initialize() {
 	impl_->initialize();
 }
