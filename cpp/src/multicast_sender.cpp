@@ -20,7 +20,7 @@ public:
 					endpoint.protocol()) {
 	}
 
-	void send(Buffer_t data) {
+	void send(const Buffer_t& data) {
 		socket_.async_send_to(boost::asio::buffer(data), endpoint_,
 				boost::bind(&Impl::handle_send_to, this,
 						boost::asio::placeholders::error));
@@ -52,7 +52,7 @@ moserit::roper::MulticastSender::~MulticastSender() {
 
 }
 
-void moserit::roper::MulticastSender::send(Buffer_t buffer) {
+void moserit::roper::MulticastSender::send(const Buffer_t& buffer) {
 	impl_->send(buffer);
 }
 

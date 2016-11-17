@@ -5,9 +5,10 @@ BIN_DIR := ./bin
 OBJ_DIR := ./obj
 TOP_INCLUDE_DIR := $(TOP_DIR)/include
 TOP_OBJ_DIR := $(TOP_DIR)/obj
+GENERATED_SRC_DIR := $(TOP_DIR)/generated_src
 
 CC := g++
-CPPFLAGS += -I $(INCLUDE_DIR) -I $(SRC_DIR) -I $(TOP_INCLUDE_DIR) -I /usr/local/include 
+CPPFLAGS += -I $(INCLUDE_DIR) -I $(SRC_DIR) -I $(TOP_INCLUDE_DIR) -I $(GENERATED_SRC_DIR) -I /usr/local/include 
 CFLAGS +=  -g -fPIC -std=c++14 
 LDFLAGS += -L/usr/local/lib 
 LDLIBS += -lgrpc++ -lgrpc -lboost_thread-mt -lboost_system-mt -lboost_program_options-mt -lprotobuf -lpthread -ldl -lgrpc++_reflection -lglog -lgtest -lgtest_main

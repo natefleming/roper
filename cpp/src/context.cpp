@@ -6,6 +6,10 @@
  */
 
 #include <map>
+#include <fstream>
+#include <string>
+#include <sstream>
+
 #include "context.h"
 #include "util.h"
 
@@ -15,8 +19,8 @@ namespace roper {
 class Context::Impl {
 
 public:
-	Impl() : map_() {
-
+	Impl() :
+			map_() {
 	}
 
 	~Impl() = default;
@@ -26,22 +30,22 @@ public:
 		return *this;
 	}
 
-    std::string& operator[](const std::string& key) {
-    	return map_[key];
-    }
+	Context::Value& at(const std::string& key) {
+		return map_.at(key);
+	}
 
-    const std::string& operator[](const std::string& key) const {
-
-    }
+	void insert(const std::string& key, const Context::Value& value) {
+		map_.insert(std::make_pair(key, value));
+	}
 
 private:
 
-    std::map<std::string, std::string> map_;
+	std::map<std::string, Context::Value> map_;
 
 };
 
-
-Context::Context() : impl_(moserit::make_unique<Impl>()) {
+Context::Context() :
+		impl_(moserit::make_unique<Impl>()) {
 
 }
 
@@ -55,18 +59,32 @@ Context::merge(const Context& rhs) {
 	return *this;
 }
 
-std::string&
-Context::operator[](const std::string& key) {
-	return (*impl_)[key];
+Context::Value&
+Context::at(const std::string& key) {
+	return impl_->at(key);
 }
 
-const std::string&
-Context::operator[](const std::string& key) const {
-	return (*impl_)[key];
+void Context::insert(const std::string& key, const Context::Value& value) {
+	impl_->insert(key, value);
+}
+
+void load(std::ifstream& fin, Context& context) {
+	std::string line;
+	while (std::getline(fin, line)) {
+		if (line.length() > 0 && line[0] != '#') {
+			std::istringstream lineStream(line);
+			std::string key;
+			std::string value;
+			char delim;
+			if ((lineStream >> key >> delim >> value) && (delim == '=')) {
+				Context::Value v(value);
+				context.insert(key, v);
+			}
+		}
+
+	}
 }
 
 }
 }
-
-
 

@@ -8,19 +8,21 @@
 #ifndef INCLUDE_MULTICAST_SENDER_H_
 #define INCLUDE_MULTICAST_SENDER_H_
 
+#include "types.h"
+
 namespace moserit {
 namespace roper {
 
 class MulticastSender {
 
-	using Buffer_t = std::vector<char>;
 
 public:
 
 	MulticastSender(const std::string& multicast_address, short port);
 	virtual ~MulticastSender();
 
-	virtual void send(Buffer_t message);
+	virtual void send(const Buffer_t& message);
+
 
 private:
 
