@@ -119,7 +119,8 @@ private:
 	char data_[max_length];
 };
 
-moserit::roper::MulticastDiscovery::MulticastDiscovery(
+moserit::roper::
+MulticastDiscovery::MulticastDiscovery(
 		const std::string& bind_address, const std::string& multicast_address,
 		short mulitcast_port) {
 	impl_ = moserit::make_unique<Impl>(
@@ -129,37 +130,46 @@ moserit::roper::MulticastDiscovery::MulticastDiscovery(
 			boost::asio::ip::address::from_string(multicast_address));
 }
 
-moserit::roper::MulticastDiscovery::MulticastDiscovery(
+moserit::roper::
+MulticastDiscovery::MulticastDiscovery(
 		const std::string& multicast_address, short mulitcast_port) {
 }
 
-moserit::roper::MulticastDiscovery::~MulticastDiscovery() {
+moserit::roper::
+MulticastDiscovery::~MulticastDiscovery() {
 }
 
-void moserit::roper::MulticastDiscovery::initialize() {
+void moserit::roper::
+MulticastDiscovery::initialize() {
 	impl_->initialize();
 }
 
-void moserit::roper::MulticastDiscovery::start() {
+void moserit::roper::
+MulticastDiscovery::start() {
 	impl_->start();
 }
 
-void moserit::roper::MulticastDiscovery::stop() {
+void moserit::roper::
+MulticastDiscovery::stop() {
 	impl_->stop();
 }
 
-void moserit::roper::MulticastDiscovery::terminate() {
+void moserit::roper::
+MulticastDiscovery::terminate() {
 	impl_->terminate();
 }
 
-void moserit::roper::MulticastDiscovery::await_termination() {
+void moserit::roper::
+MulticastDiscovery::await_termination() {
 	impl_->await_termination();
 }
 
-void moserit::roper::MulticastDiscovery::publish() {
+void moserit::roper::
+MulticastDiscovery::publish() {
 
 }
 
-void moserit::roper::MulticastDiscovery::subscribe() {
+void moserit::roper::
+MulticastDiscovery::subscribe() {
 
 }

@@ -11,7 +11,10 @@
 #include "multicast_sender.h"
 #include "util.h"
 
-class moserit::roper::MulticastSender::Impl {
+namespace moserit {
+namespace roper {
+
+class MulticastSender::Impl {
 
 public:
 
@@ -40,7 +43,11 @@ private:
 
 };
 
-moserit::roper::MulticastSender::MulticastSender(
+}
+}
+
+moserit::roper::
+MulticastSender::MulticastSender(
 		const std::string& multicast_address, short port) {
 	impl_ = moserit::make_unique<Impl>(
 			boost::asio::ip::udp::endpoint(
@@ -48,11 +55,13 @@ moserit::roper::MulticastSender::MulticastSender(
 					port));
 }
 
-moserit::roper::MulticastSender::~MulticastSender() {
+moserit::roper::
+MulticastSender::~MulticastSender() {
 
 }
 
-void moserit::roper::MulticastSender::send(const Buffer_t& buffer) {
+void moserit::roper::
+MulticastSender::send(const Buffer_t& buffer) {
 	impl_->send(buffer);
 }
 

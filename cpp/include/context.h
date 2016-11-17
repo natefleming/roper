@@ -1,16 +1,14 @@
 /*
- * context.h
+ * Context.h
  *
- *  Created on: Nov 14, 2016
+ *  Created on: Nov 17, 2016
  *      Author: natefleming
  */
 
 #ifndef INCLUDE_CONTEXT_H_
 #define INCLUDE_CONTEXT_H_
 
-#include <iostream>
-#include <memory>
-#include <boost/lexical_cast.hpp>
+#include "dispatch_policy.h"
 
 namespace moserit {
 namespace roper {
@@ -19,49 +17,19 @@ class Context {
 
 public:
 
-	class Value {
-	public:
-		Value(const Context::Value& value) :
-				value_(value.value_) {
-		}
+	Context(const std::shared_ptr<DispatchPolicy> policy = DispatchPolicy::sync_retry_policy());
 
-		Value(const std::string& value) :
-				value_(value) {
-		}
-
-		template<typename T>
-		T& as() {
-			return boost::lexical_cast<T&>(value_);
-		}
-
-		template<typename T>
-		const T& as() const {
-			return boost::lexical_cast<const T&>(value_);
-		}
-
-	private:
-
-		std::string value_;
-
-	};
-
-	Context();
-	virtual ~Context();
-
-	Context& merge(const Context& rhs);
-
-	Context::Value& at(const std::string& key);
-
-	void insert(const std::string& key, const Context::Value& value);
+	std::shared_ptr<DispatchPolicy> dispatch_policy() const;
 
 private:
 
-	class Impl;
-	std::unique_ptr<Impl> impl_;
+	std::shared_ptr<DispatchPolicy> policy_;
 
 };
 
 }
 }
+
+
 
 #endif /* INCLUDE_CONTEXT_H_ */

@@ -6,16 +6,17 @@
  */
 
 #include <gtest/gtest.h>
-#include "context.h"
 
-#ifndef TESTING_INCLUDE_CONTEXT_TEST_H_
-#define TESTING_INCLUDE_CONTEXT_TEST_H_
+#include "../../include/configuration.h"
+
+#ifndef TESTING_INCLUDE_CONFIGURATION_TEST_H_
+#define TESTING_INCLUDE_CONFIGURATION_TEST_H_
 
 
 using namespace moserit::roper;
 
 
-class ContextText : public ::testing::Test {
+class ConfigurationTest : public ::testing::Test {
 
 protected:
 
@@ -27,7 +28,7 @@ protected:
 
 };
 
-TEST_F(ContextText, should_load_from_command_line) {
+TEST_F(ConfigurationTest, should_load_from_command_line) {
 }
 
 
