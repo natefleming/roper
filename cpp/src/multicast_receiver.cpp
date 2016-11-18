@@ -5,6 +5,8 @@
  *      Author: natefleming
  */
 
+#include <cassert>
+#include <future>
 #include <vector>
 #include <memory>
 #include <glog/logging.h>
@@ -26,18 +28,36 @@ class MulticastReceiver::Impl {
 				io_service_(),
 				socket_(nullptr),
 				data_(Impl::max_length) {
+			LOG(INFO)<< "MulticastReceiver::Impl::Impl";
+			initialize();
+		}
+
+		~Impl() {
+			LOG(INFO)<< "MulticastReceiver::Impl::~Impl";
+			if(socket_) {
+				socket_->close();
+			}
+			io_service_.stop();
+			future_.get();
 		}
 
 		void initialize() {
-			LOG(INFO)<< "initialize";
+			LOG(INFO)<< "MulticastReceiver::Impl::initialize";
 			socket_ = make_socket();
+			LOG(INFO) << "socket_.is_open: " << socket_->is_open();
+			LOG(INFO) << "socket_.local_endpoint: " << socket_->local_endpoint();
+			future_ = std::async([this]() {
+				io_service_.run();
+			});
 		}
 
 		void on_receive(std::function<void (const Buffer_t&)> message_handler) {
 			message_handler_ = message_handler;
+			receive_from();
 		}
 
 		std::unique_ptr<boost::asio::ip::udp::socket> make_socket() {
+			LOG(INFO) << "MulticastReceiver::Impl::make_socket";
 			using boost::asio::ip::udp;
 			std::unique_ptr<udp::socket> socket(
 					moserit::make_unique<udp::socket>(io_service_));
@@ -51,7 +71,7 @@ class MulticastReceiver::Impl {
 		}
 
 		void receive_from() {
-			LOG(INFO) << "receive_from";
+			LOG(INFO) << "MulticastReceiver::Impl::receive_from";
 			boost::asio::ip::udp::endpoint sender_endpoint;
 			socket_->async_receive_from(boost::asio::buffer(data_, max_length),
 					sender_endpoint,
@@ -63,7 +83,7 @@ class MulticastReceiver::Impl {
 		void handle_receive_from(
 				const boost::system::error_code& error,
 				size_t bytes_recvd) {
-			LOG(INFO) << "handle_receive_from";
+			LOG(INFO) << "MulticastReceiver::Impl::handle_receive_from";
 			if (!error) {
 				message_handler_(data_);
 				receive_from();
@@ -80,6 +100,7 @@ class MulticastReceiver::Impl {
 
 	private:
 
+		std::future<void> future_;
 		boost::asio::ip::udp::endpoint bind_endpoint_;
 		boost::asio::ip::address multicast_address_;
 		boost::asio::io_service io_service_;

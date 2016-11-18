@@ -52,6 +52,7 @@ SyncRetryDispatchPolicy::dispatch(
 	for(auto i : boost::irange(0, retry_count())) {
 		try {
 			command();
+			exception.reset(nullptr);
 			break;
 		} catch (const std::exception& e){
 			LOG(ERROR) << e.what();

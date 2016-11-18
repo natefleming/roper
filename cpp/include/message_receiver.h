@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <memory>
+#include <glog/logging.h>
 #include "types.h"
 
 namespace moserit {
@@ -35,23 +36,27 @@ private:
 template<class TMessage, class TReceiver>
 MessageReceiver<TMessage, TReceiver>::MessageReceiver(
 		const std::shared_ptr<TReceiver> receiver) : receiver_(receiver) {
-	receiver_->on_receive([this](const Buffer_t& buffer) {
-		TMessage message;
-		message.ParseFromArray(&buffer, buffer.size());
-		message_handler_(message);
-	});
+	LOG(INFO) << "MessageReceiver::MessageReceiver";
+
 }
 
 template<class TMessage, class TReceiver>
 MessageReceiver<TMessage, TReceiver>::~MessageReceiver() {
-
+	LOG(INFO) << "MessageReceiver::~MessageReceiver";
 }
 
 template<class TMessage, class TReceiver>
 void
 MessageReceiver<TMessage, TReceiver>::on_receive(
 		std::function<void (TMessage)> message_handler) {
+	LOG(INFO) << "MessageReceiver::on_receive";
 	message_handler_ = message_handler;
+	receiver_->on_receive([this](const Buffer_t& buffer) {
+		LOG(INFO) << "MessageReceiver::on_receive";
+		TMessage message;
+		message.ParseFromArray(&buffer, buffer.size());
+		message_handler_(message);
+	});
 }
 
 }

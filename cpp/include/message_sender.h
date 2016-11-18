@@ -35,17 +35,17 @@ template<class TMessage, class TSender>
 MessageSender<TMessage, TSender>::MessageSender(
 		const std::shared_ptr<TSender> sender) :
 		sender_(sender) {
-
+	LOG(INFO)<< "MessageSender::MessageSender";
 }
 
 template<class TMessage, class TSender>
 MessageSender<TMessage, TSender>::~MessageSender() {
-
+	LOG(INFO)<< "MessageSender::~MessageSender";
 }
 
 template<class TMessage, class TSender>
 void MessageSender<TMessage, TSender>::send(const TMessage& message) {
-	LOG(INFO)<< "Sending message: " << message.DebugString();
+	LOG(INFO)<< "MessageSender::send(message=" << message.DebugString() << ")";
 	std::string bytes;
 	message.SerializeToString(&bytes);
 	std::vector<char> buffer(bytes.begin(), bytes.end());

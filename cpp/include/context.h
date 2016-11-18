@@ -18,6 +18,7 @@ class Context {
 public:
 
 	Context(const std::shared_ptr<DispatchPolicy> policy = DispatchPolicy::sync_retry_policy());
+	virtual ~Context() {}
 
 	std::shared_ptr<DispatchPolicy> dispatch_policy() const;
 
