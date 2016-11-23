@@ -21,69 +21,65 @@ namespace roper {
 class MulticastReceiver::Impl {
 
 	public:
-		Impl(const boost::asio::ip::udp::endpoint& bind_endpoint,
+		Impl(boost::asio::io_service& io_service,
+				const boost::asio::ip::udp::endpoint& bind_endpoint,
 				const boost::asio::ip::address& multicast_address) :
 				bind_endpoint_(bind_endpoint),
 				multicast_address_(multicast_address),
-				io_service_(),
-				socket_(nullptr),
-				data_(Impl::max_length) {
+				socket_(io_service) {
 			LOG(INFO)<< "MulticastReceiver::Impl::Impl";
 			initialize();
 		}
 
 		~Impl() {
 			LOG(INFO)<< "MulticastReceiver::Impl::~Impl";
-			if(socket_) {
-				socket_->close();
-			}
-			io_service_.stop();
-			future_.get();
+			socket_.close();
 		}
 
 		void initialize() {
 			LOG(INFO)<< "MulticastReceiver::Impl::initialize";
-			socket_ = make_socket();
-			LOG(INFO) << "socket_.is_open: " << socket_->is_open();
-			LOG(INFO) << "socket_.local_endpoint: " << socket_->local_endpoint();
-			future_ = std::async([this]() {
-				io_service_.run();
-			});
+			make_socket();
+			LOG(INFO) << "socket_.is_open: " << socket_.is_open();
+			LOG(INFO) << "socket_.local_endpoint: " << socket_.local_endpoint();
 		}
 
 		void on_receive(std::function<void (const Buffer_t&)> message_handler) {
+			LOG(INFO) << "MulticastReceiver::Impl::on_receive";
 			message_handler_ = message_handler;
 			receive_from();
 		}
 
-		std::unique_ptr<boost::asio::ip::udp::socket> make_socket() {
+		void make_socket() {
 			LOG(INFO) << "MulticastReceiver::Impl::make_socket";
 			using boost::asio::ip::udp;
-			std::unique_ptr<udp::socket> socket(
-					moserit::make_unique<udp::socket>(io_service_));
-			socket->open(bind_endpoint_.protocol());
-			socket->set_option(udp::socket::reuse_address(true));
-			socket->set_option(boost::asio::ip::multicast::enable_loopback(true));
-			socket->bind(bind_endpoint_);
-			socket->set_option(
+			LOG(INFO) << "Opening socket...";
+			socket_.open(bind_endpoint_.protocol());
+			LOG(INFO) << "Reusing address...";
+			socket_.set_option(udp::socket::reuse_address(true));
+			LOG(INFO) << "Enabling loopback...";
+			socket_.set_option(boost::asio::ip::multicast::enable_loopback(true));
+			LOG(INFO) << "Binding..." << bind_endpoint_;
+			socket_.bind(bind_endpoint_);
+			LOG(INFO) << "Joining multicast group: " << multicast_address_;
+			socket_.set_option(
 					boost::asio::ip::multicast::join_group(multicast_address_));
-			return socket;
 		}
 
 		void receive_from() {
 			LOG(INFO) << "MulticastReceiver::Impl::receive_from";
 			boost::asio::ip::udp::endpoint sender_endpoint;
-			socket_->async_receive_from(boost::asio::buffer(data_, max_length),
+			socket_.async_receive_from(boost::asio::buffer(data_, max_length),
 					sender_endpoint,
 					boost::bind(&Impl::handle_receive_from, this,
 							boost::asio::placeholders::error,
 							boost::asio::placeholders::bytes_transferred));
+			LOG(INFO) << "MulticastReceiver::Impl::receive_from(sender=" << sender_endpoint << ")";
 		}
 
 		void handle_receive_from(
 				const boost::system::error_code& error,
-				size_t bytes_recvd) {
-			LOG(INFO) << "MulticastReceiver::Impl::handle_receive_from";
+				std::size_t bytes_recvd) {
+			LOG(INFO) << "MulticastReceiver::Impl::handle_receive_from - received: " << bytes_recvd << " bytes";
 			if (!error) {
 				message_handler_(data_);
 				receive_from();
@@ -100,18 +96,15 @@ class MulticastReceiver::Impl {
 
 	private:
 
-		std::future<void> future_;
 		boost::asio::ip::udp::endpoint bind_endpoint_;
 		boost::asio::ip::address multicast_address_;
-		boost::asio::io_service io_service_;
-		std::unique_ptr<boost::asio::ip::udp::socket> socket_;
+		boost::asio::ip::udp::socket socket_;
 		std::function<void (const Buffer_t&)> message_handler_;
 
 		enum {
 			max_length = 1024
 		};
-		//char data_[max_length];
-		std::vector<char> data_;
+		char data_[max_length];
 	};
 
 }
@@ -119,14 +112,23 @@ class MulticastReceiver::Impl {
 
 moserit::roper::
 MulticastReceiver::MulticastReceiver(
+		boost::asio::io_service& io_service,
 		const std::string& bind_address,
 		const std::string& multicast_address,
 		short mulitcast_port) {
 	impl_ = moserit::make_unique<Impl>(
+			io_service,
 			boost::asio::ip::udp::endpoint(
 					boost::asio::ip::address::from_string(bind_address),
 					mulitcast_port),
 			boost::asio::ip::address::from_string(multicast_address));
+}
+
+moserit::roper::
+MulticastReceiver::MulticastReceiver(
+		boost::asio::io_service& io_service,
+		const std::string& multicast_address,
+		short mulitcast_port) : MulticastReceiver(io_service, "0.0.0.0", multicast_address, mulitcast_port) {
 }
 
 moserit::roper::

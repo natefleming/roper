@@ -8,9 +8,12 @@
 #ifndef INCLUDE_MESSAGE_RECEIVER_H_
 #define INCLUDE_MESSAGE_RECEIVER_H_
 
-#include <functional>
-#include <memory>
 #include <glog/logging.h>
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <vector>
+
 #include "types.h"
 
 namespace moserit {
@@ -52,9 +55,10 @@ MessageReceiver<TMessage, TReceiver>::on_receive(
 	LOG(INFO) << "MessageReceiver::on_receive";
 	message_handler_ = message_handler;
 	receiver_->on_receive([this](const Buffer_t& buffer) {
-		LOG(INFO) << "MessageReceiver::on_receive";
+		LOG(INFO) << "MessageReceiver::on_receive(buffer=[" << buffer << "], size=[" << buffer.size() << "])";
 		TMessage message;
-		message.ParseFromArray(&buffer, buffer.size());
+		message.ParseFromString(buffer);
+		LOG(INFO) << "message=" << message.DebugString();
 		message_handler_(message);
 	});
 }

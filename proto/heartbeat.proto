@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package moserit.roper.proto;
+
+//import "timestamp.proto";
+import "endpoint.proto";
+
+message Heartbeat {
+
+//	Timestamp timestamp = 1;
+
+	Endpoint endpoint = 2;
+
+}
+
+
+

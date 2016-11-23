@@ -20,7 +20,9 @@ class Configuration {
 public:
 
 	class Value {
+
 	public:
+
 		Value(const Configuration::Value& value) :
 				value_(value.value_) {
 		}

@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <gtest/gtest.h>
+#include <boost/asio.hpp>
 
 #include "message_receiver.h"
 #include "multicast_receiver.h"
@@ -30,16 +31,13 @@ protected:
 };
 
 TEST_F(MessageReceiverTest, should_receive_message) {
-	auto receiver = std::make_shared<MulticastReceiver>("0.0.0.0", "127.0.0.1", 10000);
+	boost::asio::io_service io_service;
+	auto receiver = std::make_shared<MulticastReceiver>(io_service, "0.0.0.0", "225.2.215.254", 15981);
 	MessageReceiver<Endpoint,MulticastReceiver> message_receiver(receiver);
 	message_receiver.on_receive([](const Endpoint& endpoint) {
-
+		std::cout << "recieved endpoint: " << endpoint.DebugString() << std::endl;
 	});
 
-	//Endpoint endpoint;
-//	endpoint.set_hostname("myhostname");
-//	endpoint.set_port(3456);
-//	message_sender.send(endpoint);
 }
 
 

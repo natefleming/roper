@@ -15,7 +15,7 @@
 namespace moserit {
 namespace roper {
 
-template<class TMessage, class TSender>
+template<class TSender>
 class MessageSender {
 
 public:
@@ -23,7 +23,8 @@ public:
 	MessageSender(const std::shared_ptr<TSender> sender);
 	virtual ~MessageSender();
 
-	virtual void send(const TMessage& message);
+	template<class TMessage>
+	void send(const TMessage& message);
 
 private:
 
@@ -31,25 +32,27 @@ private:
 
 };
 
-template<class TMessage, class TSender>
-MessageSender<TMessage, TSender>::MessageSender(
+template<class TSender>
+MessageSender<TSender>::MessageSender(
 		const std::shared_ptr<TSender> sender) :
 		sender_(sender) {
 	LOG(INFO)<< "MessageSender::MessageSender";
 }
 
-template<class TMessage, class TSender>
-MessageSender<TMessage, TSender>::~MessageSender() {
+template<class TSender>
+MessageSender<TSender>::~MessageSender() {
 	LOG(INFO)<< "MessageSender::~MessageSender";
 }
 
-template<class TMessage, class TSender>
-void MessageSender<TMessage, TSender>::send(const TMessage& message) {
+template<typename TSender>
+template<typename TMessage>
+void MessageSender<TSender>::send(const TMessage& message) {
 	LOG(INFO)<< "MessageSender::send(message=" << message.DebugString() << ")";
 	std::string bytes;
 	message.SerializeToString(&bytes);
-	std::vector<char> buffer(bytes.begin(), bytes.end());
-	sender_->send(buffer);
+	LOG(INFO)<< "MessageSender::send(bytes=[" << bytes << "], size=[" << bytes.size() << "])";
+	//Buffer_t buffer(bytes.begin(), bytes.end());
+	sender_->send(bytes);
 }
 
 }

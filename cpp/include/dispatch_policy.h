@@ -26,6 +26,7 @@ public:
 	static std::shared_ptr<DispatchPolicy> sync_retry_policy(
 			int retry_count = DEFAULT_RETRY_COUNT,
 			long sleep_time = DEFAULT_SLEEP_TIME_MILLIS);
+
 	static std::shared_ptr<DispatchPolicy> async_policy();
 
 protected:
@@ -69,8 +70,6 @@ class SyncRetryDispatchPolicy : public RetryDispatchPolicy {
 	friend class DispatchPolicy;
 
 public:
-
-	static const int DEFAULT_RETRY_COUNT = 5;
 
 	virtual void dispatch(std::function<void ()> command);
 

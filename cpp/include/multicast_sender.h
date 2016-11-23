@@ -18,7 +18,10 @@ class MulticastSender {
 
 public:
 
-	MulticastSender(const std::string& multicast_address, short port);
+	MulticastSender(
+			boost::asio::io_service& io_service,
+			const std::string& multicast_address,
+			short port);
 	virtual ~MulticastSender();
 
 	virtual void send(const Buffer_t& message);

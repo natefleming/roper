@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package moserit.roper;
+
+message Timestamp {
+
+	string time = 1;
+
+}
+

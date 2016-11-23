@@ -17,13 +17,19 @@ namespace roper {
 
 class MulticastReceiver {
 
-
 public:
 
 	MulticastReceiver(
+			boost::asio::io_service& io_service,
 			const std::string& bind_address,
 			const std::string& multicast_address,
 			short mulitcast_port);
+
+	MulticastReceiver(
+			boost::asio::io_service& io_service,
+			const std::string& multicast_address,
+			short mulitcast_port);
+
 	virtual ~MulticastReceiver();
 
 	virtual void on_receive(std::function<void (const Buffer_t&)> message_handler);

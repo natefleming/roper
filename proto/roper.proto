@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package moserit.roper;
 
+import "endpoint.proto";
+
 service LandlordService {
 
 	rpc Find (FindLeasesRequest) returns (FindLeasesResponse) {}
@@ -11,14 +13,6 @@ service LandlordService {
 	rpc Renew (LeaseRenewRequest) returns (LeaseRenewResponse) {}
 
 	rpc Cancel (LeaseCancelRequest) returns (LeaseCancelResponse) {}
-
-}
-
-message Endpoint {
-
-	string hostname = 1;
-
-	int32 port = 2;
 
 }
 
